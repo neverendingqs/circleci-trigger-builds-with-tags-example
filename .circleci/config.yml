@@ -4,7 +4,6 @@ jobs:
     docker:
       - image: circleci/ruby:2.4.1
     steps:
-      - checkout
       - run:
           name: build
           command: echo "Building..."
@@ -12,16 +11,79 @@ jobs:
     docker:
       - image: circleci/ruby:2.4.1
     steps:
-      - checkout
       - run:
           name: test
           command: echo "Testing..."
+  deploy-master:
+    docker:
+      - image: circleci/ruby:2.4.1
+    steps:
+      - run:
+          name: Deploy dev release.
+          command: echo "Deploying dev release on master branch..."
+  deploy-alpha:
+    docker:
+      - image: circleci/ruby:2.4.1
+    steps:
+      - run:
+          name: Deploy edge release.
+          command: echo "Deploying edge release based on Git tag..."
+  deploy-stable:
+    docker:
+      - image: circleci/ruby:2.4.1
+    steps:
+      - run:
+          name: Deploy stable release.
+          command: echo "Deploying stable release based on Git tag..."
+  docs-build:
+    docker:
+      - image: circleci/ruby:2.4.1
+    steps:
+      - run:
+          name: Build docs for release.
+          command: echo "Building docs for release..."
 
 workflows:
   version: 2
-  build_and_test:
+  build-test-deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only: /.*/
       - test:
           requires:
             - build
+          filters:
+            tags:
+              only: /.*/
+      - deploy-master:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
+      - deploy-alpha:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*-alpha/
+      - deploy-stable:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[^-+]*$/
+      - docs-build:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              ignore: /^v.*-alpha/
