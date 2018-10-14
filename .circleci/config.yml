@@ -14,13 +14,6 @@ jobs:
       - run:
           name: test
           command: echo "Testing..."
-  deploy-master:
-    docker:
-      - image: circleci/ruby:2.4.1
-    steps:
-      - run:
-          name: Deploy dev release.
-          command: echo "Deploying dev release on master branch..."
   deploy-alpha:
     docker:
       - image: circleci/ruby:2.4.1
@@ -57,12 +50,6 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - deploy-master:
-          requires:
-            - test
-          filters:
-            branches:
-              only: master
       - deploy-alpha:
           requires:
             - test
