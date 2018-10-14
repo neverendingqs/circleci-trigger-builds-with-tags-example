@@ -65,7 +65,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^v[^-+]*$/
+              only: /^v[^-]*$/
       - docs-build:
           requires:
             - test
