@@ -57,7 +57,7 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^v.*-alpha/
+              only: /^v.*-alpha$/
       - deploy-stable:
           requires:
             - test
@@ -73,4 +73,4 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              ignore: /^v.*-alpha/
+              ignore: /^v.*-alpha$/
