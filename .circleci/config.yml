@@ -45,7 +45,10 @@ jobs:
 
 workflows:
   version: 2
-  build-test-deploy:
+  workflow1:
+    filters:
+      tags:
+        only: /.*/
     jobs:
       - build:
           filters:
@@ -57,33 +60,15 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - deploy-master:
-          requires:
-            - test
+  workflow2:
+    jobs:
+      - build:
           filters:
-            branches:
-              only: master
-      - deploy-alpha:
-          requires:
-            - test
-          filters:
-            branches:
-              ignore: /.*/
             tags:
-              only: /^v.*-alpha/
-      - deploy-stable:
+              only: /.*/
+      - test:
           requires:
-            - test
+            - build
           filters:
-            branches:
-              ignore: /.*/
             tags:
-              only: /^v[^-+]*$/
-      - docs-build:
-          requires:
-            - test
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              ignore: /^v.*-alpha/
+              only: /.*/
